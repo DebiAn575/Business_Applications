@@ -32,13 +32,13 @@ It is observed that the XgBoost model has better performance in comparison to ot
 #### 5. Business Valuation
 Based on the XgBoost models output and selection of important features, the project concludes that top predictors classify applicants to identify whether they will default or not, these features should be analyzed in more depth before offering loans to any applicant. 
 The top features are 
-EXT_SOURCE_3: Normalized score from the external data source
-EXT_SOURCE_2: Normalized score from the external data source
-DAYS_BIRTH: Client's age in days at the time of application
-DAYS_ID_PUBLISH: How many days before the application did the client change the identity document?
-DAYS_REGISTRATION: How many days before the application did the client change their registration?
-DAYS_EMPLOYED: How many days before the application the person started their current employment
-DAYS_LAST_PHONE_CHANGE: Number of days since the client last changed their phone number
-AMT_ANNUITY: Loan annuity
-SK_ID_CURR: The ID of the loan in our sample
-AMT_CREDIT: Final credit amount on the previous application
+1. EXT_SOURCE_3: Normalized score from the external data source
+2. EXT_SOURCE_2: Normalized score from the external data source
+3. DAYS_BIRTH: Client's age in days at the time of application
+4. DAYS_ID_PUBLISH: How many days before the application did the client change the identity document?
+5. DAYS_REGISTRATION: How many days before the application did the client change their registration?
+6. DAYS_EMPLOYED: How many days before the application the person started their current employment
+7. DAYS_LAST_PHONE_CHANGE: Number of days since the client last changed their phone number
+8. AMT_ANNUITY: Loan annuity
+9. SK_ID_CURR: The ID of the loan in our sample
+10. AMT_CREDIT: Final credit amount on the previous application
