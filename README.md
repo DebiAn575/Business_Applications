@@ -42,3 +42,10 @@ The top features are
 8. AMT_ANNUITY: Loan annuity
 9. SK_ID_CURR: The ID of the loan in our sample
 10. AMT_CREDIT: Final credit amount on the previous application
+
+#### 6. Challenges 
+The challenge in the project was to run big models on limited hardware resources, the models took a lot of time to run and produce results. 
+A lot of predictors were removed from the initial analysis as they had a higher percentage of null values. 
+
+#### 7. Learning Outcomes
+The major learning outcome of the capstone project is that a number of predictive models were explored and the working principles of these models 
