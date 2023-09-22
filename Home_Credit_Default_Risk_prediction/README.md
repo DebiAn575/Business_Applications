@@ -1,5 +1,4 @@
-## Business_Applications 
-## Capstone Initiation - Home Credit Default Risk Prediction 
+## Home Loan Credit Default Risk Prediction And Analysis
 ### Table of Contents
 1. [Business Description](#1-business-description)
 2. [Analytical Approach](#2-analytical-approach)
