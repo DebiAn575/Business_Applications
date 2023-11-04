@@ -4,5 +4,5 @@
 
 [2.Sales Forcasting using Multivariate Timeseries Analysis in R](https://github.com/DebiAn575/Business_Applications/tree/main/Sales_Forecasting-_Multivariate_Time_Series_Analysis_R).
 
-[3. Game Day Analytics Challenge 2023 - Super Bowl 57]().
+[3. Game Day Analytics Challenge 2023 - Super Bowl 57](https://github.com/DebiAn575/Business_Applications/tree/main/Game%20Day%20Analytics%202023).
 
