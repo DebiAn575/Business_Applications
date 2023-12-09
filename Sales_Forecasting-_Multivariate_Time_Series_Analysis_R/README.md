@@ -47,19 +47,20 @@ I have used Support Vector Regressor algorithm to develop a model to forecast th
   
 ### 3. Business Valuation
 Based on the ARIMA/ETS models output and selection of important features, the project concludes that the total sales for each of target variables for the next one year is as follows for one of the Maverik stores 
-inside_sales = $1,227,062
-food_service = $338,871
-diesel = $503,891
-unleaded = $983,141
-total_sales = $3,052,965
+-inside_sales = $1,227,062
+-food_service = $338,871
+-diesel = $503,891
+-unleaded = $983,141
+-total_sales = $3,052,965
 We also observed some qualitative predictors affecting sales more than the others which should be further studied in depth to increase sales or make budget related decisions
+
 FACTORS AFFECTING STORE BUSINESS
-Diesel Sales
-Inside Sales
-Parking Space
-Toilet Count
-Population within 5-mile radius
-Number of individuals in workplace within 5-mile radius 
+-Diesel Sales
+-Inside Sales
+-Parking Space
+-Toilet Count
+-Population within 5-mile radius
+-Number of individuals in workplace within 5-mile radius 
 
 
 ### 4.  Challenges 
