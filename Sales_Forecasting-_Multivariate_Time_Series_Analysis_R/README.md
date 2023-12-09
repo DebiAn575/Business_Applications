@@ -1,4 +1,4 @@
-## Home Loan Credit Default Risk Prediction And Analysis
+## MAVERIK STORE DAILY SALES FORECAST
 ### Table of Contents
 1. [Business Description](#1-business-description)
 2. [Analytical Approach](#2-analytical-approach)
