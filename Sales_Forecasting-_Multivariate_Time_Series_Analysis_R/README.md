@@ -6,6 +6,7 @@
    2. [Exploratory Data Analysis](#22-exploratory-data-analysis)
    3. [Data Cleaning and Profiling Methods](#23-data-cleaning-and-profiling-methods)
    4. [Data Modelling](#24-data-modelling)
+   5. [Data Modelling - Debayan Contribution](#24-data-modelling-Debayan-Contribution)
 3. [Business Valuation](#3-business-valuation)
 4. [Challenges](#4-challenges)
 5. [Learning Outcomes](#5-learning-outcomes)
