@@ -68,12 +68,14 @@ FACTORS AFFECTING STORE BUSINESS
 
 ### 4.  Challenges 
 The challenge in the project was to run big models on limited hardware resources, the models took a lot of time to run and produce results. 
-Standardized Data Sets with limited number of rows. The dataset was already standardized hence the resulted forecast cannot be considered exact they can be inflated. 
-Multivariate Multi-target Analysis. The modeling for each of the target variables was tedious as individual models had to be created to make sales forecast. 
-Insufficient historical data to accurately calculate annual seasonality. We obserevd seasonality on weekly, monthly and yearly basis in our EDA and since the data was only 3 years reintroducing seasonality on forecasted data was troublesome. 
-Unavailability of precise Geographical data. Since we had to predict the sales of a new store, geographic data of stores in that area would have been help for the project. 
-Time Constraints. 
-Since there was no direct communication with the sponsors, going back and forth with questions about the data provided was not possible which was possible set back. 
+
+- Standardized Data Sets with limited number of rows. The dataset was already standardized hence the resulted forecast cannot be considered exact they can be inflated. 
+- Multivariate Multi-target Analysis. The modeling for each of the target variables was tedious as individual models had to be created to make sales forecast. 
+- Insufficient historical data to accurately calculate annual seasonality. We obserevd seasonality on weekly, monthly and yearly basis in our EDA and since the data was only 3 years 
+  reintroducing seasonality on forecasted data was troublesome. 
+- Unavailability of precise Geographical data. Since we had to predict the sales of a new store, geographic data of stores in that area would have been help for the project. 
+- Time Constraints. 
+- Since there was no direct communication with the sponsors, going back and forth with questions about the data provided was not possible which was possible set back. 
 
 ### 5. Learning Outcomes
 The major learning outcome of the capstone project is that a number of timeseries models were explored and the working principles of these models we were able to learn. The project also gives ideas about different stages and steps of exploratory data analysis and takes a deep dive into the usage of Python/R for predictive forecasting projects. As this was a collaborative project, learning group communication, professional use of a notebook, and presentation skills were also tested and honed. 
