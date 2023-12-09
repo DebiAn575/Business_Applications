@@ -52,6 +52,7 @@ Based on the ARIMA/ETS models output and selection of important features, the pr
 - diesel = $503,891
 - unleaded = $983,141
 - total_sales = $3,052,965
+
 We also observed some qualitative predictors affecting sales more than the others which should be further studied in depth to increase sales or make budget related decisions
 
 FACTORS AFFECTING STORE BUSINESS
