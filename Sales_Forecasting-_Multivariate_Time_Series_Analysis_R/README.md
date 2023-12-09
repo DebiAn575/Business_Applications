@@ -6,7 +6,7 @@
    2. [Exploratory Data Analysis](#22-exploratory-data-analysis)
    3. [Data Cleaning and Profiling Methods](#23-data-cleaning-and-profiling-methods)
    4. [Data Modelling](#24-data-modelling)
-   5. [Data Modelling - Debayan Contribution](#24-data-modelling-Debayan-Contribution)
+   5. [Data Modelling - Debayan Contribution](#25-data-modelling-Debayan-Contribution)
 3. [Business Valuation](#3-business-valuation)
 4. [Challenges](#4-challenges)
 5. [Learning Outcomes](#5-learning-outcomes)
@@ -39,6 +39,8 @@ The project further explores hyperparameter tuning to make the models more robus
 It is observed that the ARIMA/ETS has better performance in comparison to other models. 
 
 ### 2.5 Data Modelling - Debayan Contribution
+I used exploratory data analysis to identify trend and seasonality in the timeseries data and performed correlation matrix of qualitative data to identify the important predictors. 
+It was interesting to know that the since we had historic sales data of the stores, which automatically incorporated the qualittative data into the sales data it was presummable to use only the quantitatve data to start with a basic ARIMA model for the sales forecast. 
 I have used Support Vector Regressor algorithm to develop a model to forecast the sales for the target variables. The Model uses scaled quantitative data and has a RSME value of 
 - rmse_inside_sales = 0.3448517
 - rmse_food_service = 0.2782577
