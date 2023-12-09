@@ -5,7 +5,7 @@
    1. [Understanding Data sets provided](#21-understanding-data-sets-provided)
    2. [Exploratory Data Analysis](#22-exploratory-data-analysis)
    3. [Data Cleaning and Profiling Methods](#23-data-cleaning-and-profiling-methods)
-   4. [Data Modelling](#24-data-modelling)
+   4. [Data Modeling](#24-data-modeling)
    5. [Data Modeling - Debayan Contribution](#25-data-modeling-debayan-contribution)
 3. [Business Valuation](#3-business-valuation)
 4. [Challenges](#4-challenges)
@@ -33,7 +33,7 @@ It is also observed that the target variable also influence each others sales ov
 ### 2.3 Data Cleaning and Profiling Methods
 In the data cleaning phase of the project, the data sets have been merged based on the common key, a feature is engineered as the tenure date relaetd to the opening date of the stores, and based on the correlation output, strong features have been selected and qualitative data has been hot-encoded. 
 
-### 2.4 Data Modelling
+### 2.4 Data Modeling
 In the data modeling phase, Five models were developed to leverage Maverik’s historical sales data: Vector AutoRegressive Model, Prophet, Support Vector Regression, Extreme Gradient Boosting and ARIMA/ETS ensemble. Each model is tuned to minimize RMSE, which is the metric used to select the final model.
 The project further explores hyperparameter tuning to make the models more robust and efficient. 
 It is observed that the ARIMA/ETS has better performance in comparison to other models. 
