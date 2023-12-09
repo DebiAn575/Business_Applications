@@ -1,7 +1,7 @@
 ## MAVERIK STORE DAILY SALES FORECAST
 ### Table of Contents
 1. [Business Description](#1-business-description)
-2. [Analytical Approach](#2-analytical-approach)
+2. [Analytical Approach - Group Solution For The Project](#2-analytical-approach-group-solution-for-the-project)
    1. [Understanding Data sets provided](#21-understanding-data-sets-provided)
    2. [Exploratory Data Analysis](#22-exploratory-data-analysis)
    3. [Data Cleaning and Profiling Methods](#23-data-cleaning-and-profiling-methods)
@@ -19,7 +19,7 @@ The Business data scientist team members will be working on the data provided by
 This project will run for 14 weeks, starting in September and ending in early December. The actionable business insights will be conveyed to the management for model buy-out through a pitch presentation.
  
 
-### 2. Analytical Approach
+### 2. Analytical Approach - Group Solution For The Project
 ### 2.1 Understanding Data sets provided 
 In this project, there are 2 CSV files, one with timeseries data related to the 4 target variables and one with the qualitative data of 38 stores, that we have used. 
 The target variables are total_inside_sales, total_food_sales, diesel and unleaded. Our approach is to use both historically sales data of the 4 target variables and the qualitative data of the stores and engineer a daily sales forecasting model for next one year that would help Maverik with investigating ROI and budgeting for the next year. We use predictive timeseries algorithms to design the model appropriately forecasting sales and minimizing the forecast percentage error in comparisons to Maverik's own naive model. 
