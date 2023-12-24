@@ -1,12 +1,12 @@
-## Home Loan Credit Default Risk Prediction And Analysis
+## MAVERIK STORE DAILY SALES FORECAST
 ### Table of Contents
 1. [Business Description](#1-business-description)
-2. [Analytical Approach](#2-analytical-approach)
+2. [Analytical Approach - Group Solution For The Project](#2-analytical-approach-group-solution-for-the-project)
    1. [Understanding Data sets provided](#21-understanding-data-sets-provided)
    2. [Exploratory Data Analysis](#22-exploratory-data-analysis)
    3. [Data Cleaning and Profiling Methods](#23-data-cleaning-and-profiling-methods)
-   4. [Data Modelling](#24-data-modelling)
-   5. [Data Modelling - Debayan Contribution](#24-data-modelling-Debayan-Contribution)
+   4. [Data Modeling](#24-data-modeling)
+   5. [Data Modeling - Debayan Contribution](#25-data-modeling-debayan-contribution)
 3. [Business Valuation](#3-business-valuation)
 4. [Challenges](#4-challenges)
 5. [Learning Outcomes](#5-learning-outcomes)
@@ -19,10 +19,9 @@ The Business data scientist team members will be working on the data provided by
 This project will run for 14 weeks, starting in September and ending in early December. The actionable business insights will be conveyed to the management for model buy-out through a pitch presentation.
  
 
-### 2. Analytical Approach
+### 2. Analytical Approach - Group Solution For The Project
 ### 2.1 Understanding Data sets provided 
 In this project, there are 2 CSV files, one with timeseries data related to the 4 target variables and one with the qualitative data of 38 stores, that we have used. 
-
 The target variables are total_inside_sales, total_food_sales, diesel and unleaded. Our approach is to use both historically sales data of the 4 target variables and the qualitative data of the stores and engineer a daily sales forecasting model for next one year that would help Maverik with investigating ROI and budgeting for the next year. We use predictive timeseries algorithms to design the model appropriately forecasting sales and minimizing the forecast percentage error in comparisons to Maverik's own naive model. 
 
 ### 2.2 Exploratory Data Analysis - 
@@ -34,29 +33,49 @@ It is also observed that the target variable also influence each others sales ov
 ### 2.3 Data Cleaning and Profiling Methods
 In the data cleaning phase of the project, the data sets have been merged based on the common key, a feature is engineered as the tenure date relaetd to the opening date of the stores, and based on the correlation output, strong features have been selected and qualitative data has been hot-encoded. 
 
-### 2.4 Data Modelling
-In the data modeling phase, supervised classification methods, the project includes XgBoost, logistic regression, Naive Bayes, and random forest model. 
+### 2.4 Data Modeling
+In the data modeling phase, Five models were developed to leverage Maverik’s historical sales data: Vector AutoRegressive Model, Prophet, Support Vector Regression, Extreme Gradient Boosting and ARIMA/ETS ensemble. Each model is tuned to minimize RMSE, which is the metric used to select the final model.
 The project further explores hyperparameter tuning to make the models more robust and efficient. 
-It is observed that the XgBoost model has better performance in comparison to other models. 
+It is observed that the ARIMA/ETS has better performance in comparison to other models. 
 
+### 2.5 Data Modeling - Debayan Contribution
+I used exploratory data analysis to identify trend and seasonality in the timeseries data and performed correlation matrix of qualitative data to identify the important predictors. 
+It was interesting to know that the since we had historic sales data of the stores, which automatically incorporated the qualittative data into the sales data it was presummable to use only the quantitatve data to start with a basic ARIMA model for the sales forecast. 
+I have used Support Vector Regressor algorithm to develop a model to forecast the sales for the target variables. The Model uses scaled quantitative data and has a RSME value of 
+- rmse_inside_sales = 0.3448517
+- rmse_food_service = 0.2782577
+- rmse_diesel = 0.567455
+- rmse_unleaded = 0.8332988
+  
 ### 3. Business Valuation
-Based on the XgBoost models output and selection of important features, the project concludes that top predictors classify applicants to identify whether they will default or not, these features should be analyzed in more depth before offering loans to any applicant. 
-The top features are 
-1. EXT_SOURCE_3: Normalized score from the external data source
-2. EXT_SOURCE_2: Normalized score from the external data source
-3. DAYS_BIRTH: Client's age in days at the time of application
-4. DAYS_ID_PUBLISH: How many days before the application did the client change the identity document?
-5. DAYS_REGISTRATION: How many days before the application did the client change their registration?
-6. DAYS_EMPLOYED: How many days before the application the person started their current employment
-7. DAYS_LAST_PHONE_CHANGE: Number of days since the client last changed their phone number
-8. AMT_ANNUITY: Loan annuity
-9. SK_ID_CURR: The ID of the loan in our sample
-10. AMT_CREDIT: Final credit amount on the previous application
+Based on the ARIMA/ETS models output and selection of important features, the project concludes that the total sales for each of target variables for the next one year is as follows for one of the Maverik stores 
+- inside_sales = $1,227,062
+- food_service = $338,871
+- diesel = $503,891
+- unleaded = $983,141
+- total_sales = $3,052,965
+
+We also observed some qualitative predictors affecting sales more than the others which should be further studied in depth to increase sales or make budget related decisions
+
+FACTORS AFFECTING STORE BUSINESS
+- Diesel Sales
+- Inside Sales
+- Parking Space
+- Toilet Count
+- Population within 5-mile radius
+- Number of individuals in workplace within 5-mile radius 
+
 
 ### 4.  Challenges 
 The challenge in the project was to run big models on limited hardware resources, the models took a lot of time to run and produce results. 
-A lot of predictors were removed from the initial analysis as they had a higher percentage of null values. 
-Since there was no direct communication with the sponsors, going back and forth with questions about the data provided was not possible which was possible set back. 
+
+- Standardized Data Sets with limited number of rows. The dataset was already standardized hence the resulted forecast cannot be considered exact they can be inflated. 
+- Multivariate Multi-target Analysis. The modeling for each of the target variables was tedious as individual models had to be created to make sales forecast. 
+- Insufficient historical data to accurately calculate annual seasonality. We obserevd seasonality on weekly, monthly and yearly basis in our EDA and since the data was only 3 years 
+  reintroducing seasonality on forecasted data was troublesome. 
+- Unavailability of precise Geographical data. Since we had to predict the sales of a new store, geographic data of stores in that area would have been help for the project. 
+- Time Constraints. 
+- Since there was no direct communication with the sponsors, going back and forth with questions about the data provided was not possible which was possible set back. 
 
 ### 5. Learning Outcomes
-The major learning outcome of the capstone project is that a number of predictive models were explored and the working principles of these models were. The project also gives ideas about different stages and steps of exploratory data analysis and takes a deep dive into the usage of Python for predictive analytics projects. As this was a collaborative project, learning group communication, professional use of a notebook, and presentation skills were also tested and honed. 
+The major learning outcome of the capstone project is that a number of timeseries models were explored and the working principles of these models we were able to learn. The project also gives ideas about different stages and steps of exploratory data analysis and takes a deep dive into the usage of Python/R for predictive forecasting projects. As this was a collaborative project, learning group communication, professional use of a notebook, and presentation skills were also tested and honed. 
