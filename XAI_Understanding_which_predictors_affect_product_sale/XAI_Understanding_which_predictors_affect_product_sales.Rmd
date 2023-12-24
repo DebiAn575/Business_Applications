@@ -1,0 +1,522 @@
+---
+title: "MKTG 6620-001 - Machine Learning for Business Applications - Final Project"
+subtitle: "MSBA Fall 2023 - Link to Posit Cloud Code: https://posit.cloud/content/7032286 "
+author: "Debayan Dutta"
+date: "2023-11-20"
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: 2
+    number_sections: yes
+    fig_width: 15
+    fig_height: 10
+    highlight: tango
+    df_print: paged
+    fig_caption: yes
+---
+
+
+# BUSINESS PROBLEM DEFINITION (Define the problem) : 
+
+The Grocery store chain that sells two types of orange juices, one Citrus Hill(CH) and the other Minute Maid (MM) is challenged with the desire to improve the performance of orange juice category by increasing overall sale, particularly the MM brand sale. It is documented that MM brand has a higher margin, and make more money on per unit sale than CH. The marketing manager is curious to know what factors (predictor variables) associated with the grocery store or each of individual products influence the choice of customer who either buys CH brand or MM brand. In turn the brand manager wants to know the variables that influence the probability of a customer purchasing MM brand orange juice. The manager wishes to understand how they can manipulate these factors to increase the sale of MM brand juice. The Sales manager on the other hand wishes to devise a predictive model that will predict the probability of a customer purchasing the MM brand juice. 
+
+The Objectives inferred from business problem description are as follows 
+
+1. Identify the most influencing predictor variables that has higher effect on customer purchasing. 
+2. Identify how the strongly influencing predictors influence the purchase of either CH or MM brand i.e what is relation between predictors and target varible is?
+3. Are all predictors important predictors? Are there predictors influencing behavior of other predictors?
+4. Build a holistic model that provides evidence of predictors influencing Purchase and also predicts the probability of customer purchasing MM brand juice with higher and better accuracy.
+
+# APPROACH AND ANALYSIS (Define method (s)) :
+
+## Loading necessary libraries
+
+```{r}
+
+options(warn = -1)
+
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(caret)
+library(glmnet)
+library(carData)
+library(car)
+library(corrplot)
+library(parsnip)
+library(tidymodels)
+library(xgboost)
+library(pROC)
+library(vip)
+
+```
+
+## Loading dataset:
+
+```{r}
+OJ<-read.csv(url("http://data.mishra.us/files/project/OJ_data.csv"))
+OJ[2:14] <- lapply(OJ[2:14], as.numeric)
+OJ$Purchase <- as.factor(OJ$Purchase)
+sapply(OJ,class)
+
+```
+
+```{r}
+
+dd <- OJ
+
+# Data set type:
+class(dd)
+
+# Structure of the data set:
+#str(dd)
+
+# Check class distribution of target variable:
+summary(dd$Purchase)
+
+```
+
+From the data frame summary we can observe that the minority class is PurchaseMM == 0 with 417 count while the majority class is PurchaseCH == 1 with 653. We can also safely assume that a difference of (653 -417) = 236 in count does not contribute towards class imbalance and hence we will not have to perform any downsampling. 
+
+
+```{r}
+# Checking descriptive statistics of price columns for MM and CH
+
+variances <- apply(dd[-1], 2, var)
+means <- apply(dd[-1], 2, mean)
+medians <- apply(dd[-1], 2, median)
+std_devs <- apply(dd[-1], 2, sd)
+
+
+ddstats <- data.frame(
+  Mean = means,
+  Median = medians,
+  SD = std_devs,
+  Variance = variances
+)
+
+print(ddstats)
+
+```
+
+From the above descriptive analysis we can see, that the price variation for MM is higher than CH. Median price of MM is 2.08 unit while that of CH is 1.86 unit. 
+
+This begs a question whether the higher margin of MM is because of its higher median price and not because of the quantities sold. We know from the purchase summary number of customers purchased MM is less than CH hence we can say priceMM is a factor that brings more revenue but does not necessarily confirms that all ordered MM items are sold by the end which can lead to overstocking. 
+
+## Check for missing values:
+
+```{r}
+# Missing value count in the data frame
+
+sum(is.na(dd))
+
+```
+
+
+There is no missing values in the dataset hence imputation is not required. 
+
+
+## Split the dataset into train and test set (80:20):
+
+```{r}
+set.seed(1234)
+
+datasplit <- createDataPartition(dd$Purchase, p = 0.8, list=FALSE) 
+trainData <- dd[datasplit,]
+testData <- dd[-datasplit,]
+
+
+Xtrain <- trainData[-1]
+ytrain <- trainData$Purchase
+
+Xtest <- testData[-1]
+ytest <- testData$Purchase
+
+
+```
+
+
+## Implementing Logistic Regression - using all predictor variables:
+
+```{r}
+
+modelLR1 <- glm(ytrain ~.,data = Xtrain, family = binomial(link = "logit"))
+
+summary(modelLR1)
+
+
+```
+
+From the prelimianry analysis, after implementing logistic regression, we can see that the predictor variables with highest effect size on purchase are 'PriceCH', 'PriceCH', 'DiscMM', 'LoyalCH' and 'PctDiscMM'. 
+
+It is also observed that coefficients of some of the predictors are 'NA' indicating these might be redundant for the fact that they are highly correlated. These predictors are 'SalePriceMM', 'SalePriceCH', 'PriceDiff', 'ListPriceDiff'. We further investigate the collinearity among the variables. 
+
+## Implementing Logistic Regression - Checking Collinearity among predictor variables:
+
+```{r}
+
+correlation_data = dd[,-1]
+
+correlation <- cor(correlation_data)
+
+corrplot(correlation, method = "square", type = "lower")
+
+```
+ 
+
+## Applying Penalized Regression - Lasso to determin the important variables: 
+
+```{r}
+
+set.seed(1234)
+
+# Lasso Regression
+
+#perform k-fold cross-validation to find optimal lambda value
+cv_model_Lasso <- cv.glmnet(as.matrix(Xtrain), 
+                            as.numeric(ytrain == 0), alpha = 1)
+
+#find optimal lambda value that minimizes test MSE
+best_lambda <- cv_model_Lasso$lambda.min
+best_lambda
+
+best_lasso <- glmnet(as.matrix(Xtrain),as.numeric(ytrain == 0), 
+                     alpha = 1, lambda = best_lambda)
+
+best_lasso
+
+coefficients_lasso <- coef(best_lasso)
+
+important_variables_lasso <- names(coefficients_lasso[coefficients_lasso != 0])
+
+coefficients_lasso
+
+```
+
+## Implementing Logistic Regression - Remodeling logistic regression with only variables obtained from lasso regression output:
+
+```{r}
+
+modelLR2 <- glm(ytrain ~ LoyalCH + PriceDiff + ListPriceDiff,data = Xtrain, 
+                family = binomial(link = "logit"))
+
+summary(modelLR2)
+
+```
+
+
+AIC score of model_LR1 = 659.21
+AIC score of model_LR2 = 656.51 
+We can observe that when we regressed the target variable Purchase against the predictor variables obtained from the lasso regression there is drop in the AIC score which is healthy when comparing two models. 
+
+## Implementing Logistic Regression - to identify how much does the predictors only affect Purchase of MM
+
+```{r}
+
+modelLR3 <- glm(ytrain == 0 ~ LoyalCH + PriceDiff + ListPriceDiff, 
+                data = Xtrain, family = binomial(link = "logit"))
+
+summary(modelLR3)
+
+
+```
+
+
+It is observed that the two major predictors affecting the purhase of MM are LoyalCH and PriceDiff, both being inversely proportional to MM purchasing.
+
+This implies that the for every 6.7258 unit decrease in loyalty of CH customer there is 1 unit rise in purchase of MM. Loyal CH customer tends to buy CH brand orange juice irrespective of price. 
+
+Again for every 2.8490 unit decrease in price difference between CH price and MM price, increases the purchase of MM price. This difference can be both increase in of CH/MM or decrease in price of CH/MM.  
+
+## Implementing Logistic Regression - Creating new train and test set with predictor variables obtained from Lasso Regression:
+
+```{r}
+
+Xtrain_modelLR2 <- Xtrain %>% select(LoyalCH,PriceDiff,ListPriceDiff)
+
+ytrain_modelLR2 <- ytrain
+
+Xtest_modelLR2 <- Xtest %>% select(LoyalCH,PriceDiff,ListPriceDiff)
+
+ytest_modelLR2 <- ytest
+
+```
+
+## Implementing Logistic Regression - Prediction using modelLR2 with train set and test set:
+
+
+```{r}
+
+prediction_modelLR2_train_prob <- predict(modelLR2, Xtrain_modelLR2, type = "response")
+prediction_modelLR2_train <- ifelse(prediction_modelLR2_train_prob > 0.5,1,0)
+prediction_modelLR2_train <- as.factor(prediction_modelLR2_train)
+
+prediction_modelLR2_test_prob <- predict(modelLR2, Xtest_modelLR2, type = "response")
+prediction_modelLR2_test <- ifelse(prediction_modelLR2_test_prob > 0.5,1,0)
+prediction_modelLR2_test <- as.factor(prediction_modelLR2_test)
+```
+
+## Implementing Logistic Regression - Performance Evaluation of modelLR2 on train set:
+
+```{r}
+
+t(confusionMatrix(prediction_modelLR2_train,ytrain_modelLR2)$table)
+
+(confusionMatrix(prediction_modelLR2_train,ytrain_modelLR2)$byClass)
+```
+
+
+
+## Implementing Logistic Regression - Performance Evaluation of modelLR2 on test set:
+
+```{r}
+
+t(confusionMatrix(prediction_modelLR2_test,ytest_modelLR2)$table)
+
+(confusionMatrix(prediction_modelLR2_test,ytest_modelLR2)$byClass)
+```
+
+ From the first confusion matrix we can see that the model has correctly predicted 456 instances meaning it is the True Positive and 74 instances are False Positive for the train data set. 
+
+ From the second confusion matrix we can see that the model has correctly predicted 117 instances meaning it is the True Positive and 27 instances are False Positive for the test data set. 
+
+
+## Implementing Logistic Regression- Evaluating AUC-ROC of modelLR2:
+
+```{r}
+
+roc_curve <- roc(response = ytest_modelLR2, predictor = prediction_modelLR2_test_prob)
+auc_roc <- auc(roc_curve)
+print(auc_roc)
+
+```
+
+
+
+## Implementing XGBoost Model - Initial data split:
+
+ For this we will split the original data into traindata and testdata. 
+ We are not scaling or standardizing the data for XGBoost model as this model will intuitively take care of any kind of scaling requirements. 
+
+```{r}
+set.seed(123)
+
+datapart <- initial_split(dd, prop = 0.8, strata = Purchase)
+
+traindata <- training(datapart)
+testdata <- testing(datapart)
+
+```
+
+## Implementing XGBoost Model - model formulation:
+
+```{r}
+
+rec_Purchase <- recipe(Purchase ~ ., traindata) %>% prep(training = traindata)
+
+```
+
+## Implementing XGBoost Model - Define XGBoost algorithm:
+
+```{r}
+
+modelXGB1 <- boost_tree(
+trees = tune(),
+tree_depth = tune(),
+learn_rate = tune()) %>%
+set_engine("xgboost", verbosity = 0) %>%
+set_mode("classification")
+```
+
+
+## Implementing XGBoost Model - Hyperparameter tuning and Cross-Validation using GridSearch:
+
+```{r}
+
+hyper_grid <- grid_regular(
+trees(),
+tree_depth(),
+learn_rate(),
+levels = 4)
+
+CVfolds <- vfold_cv(traindata, v=5)
+
+```
+
+XGboost is a blackbox model with higher predictive power and the most tuned model can be obtained by tuning the hyperparameters (also known as the model performance parameters) to achive the best fit. For our model we have incorporated 3 parameters number of trees in the model, tree depth, and learning rate. We use grid search technique to find the best hyperparameter combination that helps us achieve the best XGBoost model. 
+
+## Implementing XGBoost Model - Model fit and Prediction:
+
+```{r}
+
+modelXGB1_wf <- workflow() %>%
+add_model(modelXGB1) %>%
+add_recipe(rec_Purchase)
+
+```
+
+## Implementing XGBoost Model - Computing accuracy & aucroc score of modelXGB1:
+
+```{r}
+
+set.seed(1234)
+
+modelXGB1_tune <- modelXGB1_wf %>%
+tune_grid(
+resamples = CVfolds,
+grid = hyper_grid,
+metrics = metric_set(accuracy,roc_auc)
+)
+
+```
+
+
+
+## Implementing XGBoost Model - Seleting the best hyperparameter combinations:
+
+```{r}
+
+best_modelXGB1 <- modelXGB1_tune %>%
+select_best("accuracy","roc_auc")
+
+best_modelXGB1
+
+```
+
+## Implementing XGBoost Model - model with best hyperparameter:
+```{r}
+
+modelXGB1_finalWF <- modelXGB1_wf %>% finalize_workflow(best_modelXGB1)
+
+```
+
+## Implementing XGBoost Model - Fitting the best model:
+
+```{r}
+
+modelXGB_fit <- modelXGB1_finalWF %>%
+
+  last_fit(split = datapart)
+
+modelXGB_fit %>%
+
+  collect_metrics()
+
+```
+
+
+## Implementing XGBoost Model - Identifying most important predictors visually:
+
+```{r}
+
+modelXGB1_finalWF %>%
+fit(data = traindata) %>%
+extract_fit_parsnip() %>%
+vip(geom = "point")
+
+
+```
+
+ We can observe from the feature importance plot that the most important predictor variable is LoyalCH, followed by PriceDiff and ListPriceDiff that influences the purchase of MM over CH. 
+
+
+## Implementing XGBoost Model - Inspecting how the important predictor variables influence the target variable using PDP plots:
+
+```{r}
+
+library(DALEXtra)
+
+modelXGB2 <- modelXGB1_finalWF %>% fit(data = traindata)
+
+exp <- DALEXtra::explain_tidymodels(modelXGB2,
+data = traindata[,-1],
+y = traindata$Purchase==1, prob = TRUE,
+type = "pdp",verbose = FALSE)
+
+pdpLoyalCH <- model_profile(exp,
+variables = "LoyalCH")
+
+pdpPriceDiff <- model_profile(exp,
+variables = "PriceDiff")
+
+pdpListPriceDiff <- model_profile(exp,
+variables = "ListPriceDiff")
+
+
+```
+
+## Implementing XGBoost Model - LoyalCH influence on Purchase:
+
+```{r}
+
+plot(pdpLoyalCH, title = 'Partial Dependence profile of LoyalCH')
+
+
+```
+
+## Implementing XGBoost Model - PriceDiff influence on Purchase:
+
+```{r}
+
+plot(pdpPriceDiff, title = 'Partial Dependence profile of PriceDiff')
+
+```
+
+## Implementing XGBoost Model - ListPriceDiff influence on Purchase:
+
+```{r}
+
+plot(pdpListPriceDiff, title = 'Partial Dependence profile of ListPriceDiff')
+
+```
+
+
+## SUMMARY OF ANALYTICAL APPROACH:
+
+Data: The data provided to us has 14 columns and 1070 records. The "Purchase" column is the target variable with binary values of 1 representing a customer purchasing CH brand and 0 representing MM brand. 
+
+EDA: Upon exploring the data frame, it is observed that there were no missing/Null values and hence we have not performed any imputation. All predictor variables (13 out 14 columns excluding the Purchase column) are "numeric" datatype. We observed that the predictor variables are all same data type and scaled and doesn't have different units associated with them in addition to that, we have obtained the descriptive statistics of the predictor variables and the variance among the recorded data in the columns are not high, hence we have decided not to pursue any scaling/standardization, as the data points are not largely diverse. 
+
+Class Imbalance: The distribution of target variable does not show any significant class imbalance as the majority class (Purchase==1)  is  653 count and minority class (Purchase==0) is 417. Hence we have chosen not to down-sample the majority class. 
+
+Train-Test Split: We have split the data set into 80:20 train-test split for our model fit and prediction. This is essential for evaluating model performance, estimating different features and to inspect and avoid over-fitting and under-fitting of our model. 
+
+ Predictive Model Selection and Implementation: 
+
+Logistic Regression: The first logistic regression that we use is with all predictor variables regressed against the target variable purchase. We do notice the effect size of some variables being more than others, however, we also notice that the coefficients of some variables appear to be NA (refer modelLR1). This suggest that there is redundancy among variable due to multicollinearity.
+
+Multicollinearity: To address the issue of multicollinearity we have implemented penalized regression technique, a Lasso regression model, which gives us 5 variables that are influencing the Purchase, target variable while penalizes other redundant variables to 0. The Lasso regression, also known as L1 regularization, helps to achieve model feature selection and to avoid model over-fitting.  
+
+Variable Selection: The 3 most important predictor variables obtained from lasso regression are 'LoyalCH','PriceDiff','ListPriceDiff'. We model another Logistic regression model with these 5 predictors (refer modelLR2) and we obtaine the AIC score to be 656.51 (less than AIC of modelLR1, 659.21). The model, modelLR2 obtains a ROCAUC score of 0.8697, implying decent performance. Hence we can conclude that the using all predictor variables (13) is not advisable rather use only the important once to obtain better results for logistic regression modeling.  
+
+Gradient Boosted Tree: We further implement a black-box model, XGBoost, to investigate if our performance can be further perfected. The Xgboot model has been hyper-parameter tuned with 3 parameter, viz. number of decision trees in the ensemble model, tree depth and learning rate. We obatin the best combination of hyper-parameter using grid search. This model provides a ROCAUC score of 0.9267, which is indicates better performance than the logistic regression model. Since Xgboost intuitively takes care of redundancy among predictor features and over-fitting there is less investment on pre-processing. The Xgboost model also provides us with same number of important features which includes include 'LoyalCH','PriceDiff','ListPriceDiff'. 'LoyalCH' being the strongest predictor. 
+
+The partial dependency plots obtained for 'LoyalCH' predictor variable, inferred as a strong predictor from the XGBoost model, shows a rather fluctuating relation between target variable and the predictor. This implies that the behavior of Loyal CH brand customers have been rather sporadic than constant. Seasonality and external events might have influenced so. The fluctuation in Loyal CH customer behavior has either helped increase MM brand sales or decreases MM brand sales time to time. 
+
+In conclusion, the XGBoost model performs better and is recommended as the model that can be used to predict new customer purchase pattern. 
+
+
+# RESULTS AND RECOMMENDATIONS:
+
+## BRAND MANAGER RECOMMENDATIONS:
+
+The predictor variables that can be of marketing managers interest are 'LoyalCH','PriceDiff','ListPriceDiff'. These predictor variables highly influence the Purchase pattern of customers.To increase the sale of MM brand a few recommended steps would be to firstly, build a wider and loyal customer base for MM, understand the loyal customer of CH brand loyal and what drives them to be comfortable with purchasing CH brand again and again. New customers can be incentivized by free samples and one on one purchase, provide special discounts and offers to attract old and new customers. Implement a more robust SpecialMM offers that can appeal emotionally to the customer building a sense of importance of being a loyal MM customer. Secondly, focus on the price difference between the CH and MM brand, and reason with the customer base why the price difference exists if it is not possible to minimize the price difference.   
+
+## SALES MAANAGER RECOMMENDATIONS: 
+
+We implemented two models both which can be used to provide the probability of a new customer purchasing MM brand. We recommend using XGboost model as it has a better performance (ROCAUC ~ 0.93). Since there an obvious expectation of more data to be sourced in course of time, more customer purchase pattern data can be fed into the model along side more new predictors can be incorporated in the model to make it further accurate in prediction, XGboost model is highly scalable and will fit the task perfectly. XGBoost incorporates regularization techniques to prevent over-fitting and improve generalization performance.
+
+
+
+Link to Posit Cloud Code: https://posit.cloud/content/7032286
+
+
+
+
+
+
+
+
+
+
