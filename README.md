@@ -2,7 +2,7 @@
 
 [1.Credit Default risk analysis and prediction](https://github.com/DebiAn575/Business_Applications/tree/main/Home_Credit_Default_Risk_prediction).
 
-[2.Sales Forcasting using Multivariate Timeseries Analysis in R](https://github.com/DebiAn575/Business_Applications/tree/main/Sales_Forecasting-_Multivariate_Time_Series_Analysis_R).
+[2.Maverik Sales Forecasting Time Series Analysis](https://github.com/DebiAn575/Business_Applications/tree/main/Maverik_Sales_Forecasting).
 
 [3. Game Day Analytics Challenge 2023 - Super Bowl 57](https://github.com/DebiAn575/Business_Applications/tree/main/Game%20Day%20Analytics%202023).
 
