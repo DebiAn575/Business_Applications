@@ -6,3 +6,6 @@
 
 [3. Game Day Analytics Challenge 2023 - Super Bowl 57](https://github.com/DebiAn575/Business_Applications/tree/main/Game%20Day%20Analytics%202023).
 
+[4. Evaluating Market Performance and Predicting Strongest Variables affecting Sales](https://github.com/DebiAn575/Business_Applications/tree/main/XAI_Understanding_which_predictors_affect_product_sale).
+
+
